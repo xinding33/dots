@@ -1,0 +1,44 @@
+# SYNC.md is the source of truth. This file is a second safety layer that blocks
+# credentials, sessions, logs, caches, and machine state from entering Git.
+
+# Shared instructions and skills
+dotagents/*
+!dotagents/AGENTS.md
+!dotagents/skills/
+!dotagents/skills/**
+
+# Codex authentication and generated state
+dotcodex/auth.json
+dotcodex/*.json
+dotcodex/*.json.bak
+dotcodex/*.json.tmp-*
+dotcodex/config.toml.bak-*
+dotcodex/*.sqlite
+dotcodex/*.sqlite-*
+dotcodex/.personality_migration
+dotcodex/cap_sid
+dotcodex/installation_id
+dotcodex/session_index.jsonl
+dotcodex/.sandbox/
+dotcodex/.sandbox-bin/
+dotcodex/.sandbox-secrets/
+dotcodex/.tmp/
+dotcodex/archived_sessions/
+dotcodex/automations/
+dotcodex/browser/
+dotcodex/cache/
+dotcodex/computer-use/
+dotcodex/computer-use-turn-ended/
+dotcodex/generated_images/
+dotcodex/marketplaces/
+dotcodex/memories/
+dotcodex/node_repl/
+dotcodex/pets/
+dotcodex/process_manager/
+dotcodex/sessions/
+dotcodex/sqlite/
+dotcodex/tmp/
+dotcodex/vendor_imports/
+dotcodex/worktrees/
+
+.backup/
