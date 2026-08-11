@@ -22,7 +22,7 @@ canonical shared instructions:
 
 ## Defaults
 
-- Use GPT-5.6 Sol at extra-high reasoning effort.
+- Use GPT-5.6 Sol at medium reasoning effort.
 - Allow edits and commands inside the active workspace.
 - Allow network access for package installation, GitHub, and CI.
 - Require approval before writing outside the workspace.
