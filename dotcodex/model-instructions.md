@@ -65,9 +65,9 @@ ASD-STE100 dictionary unless the user asks for strict compliance.
 ## Codex automations
 
 - For Codex automations, default to model `gpt-5.6-sol` and reasoning effort
-  `xhigh` unless the user requests other settings.
+  `medium` unless the user requests other settings.
 - For cron automations, pass `model: "gpt-5.6-sol"` and
-  `reasoningEffort: "xhigh"` by default.
+  `reasoningEffort: "medium"` by default.
 
 ## Git attribution
 
