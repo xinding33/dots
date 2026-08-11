@@ -41,8 +41,19 @@ a change through a green GitHub pull request.
 ## Sync policy
 
 [SYNC.md](SYNC.md) is the source of truth for backup and restore. The routine is
-documented rather than automated so every diff can be reviewed before it
-changes the live configuration or enters Git.
+agent-driven so it can curate `config.toml` and review every diff.
+
+Run the launcher from this checkout:
+
+```bash
+./dots status
+./dots backup
+./dots restore
+```
+
+Each command opens Codex with the relevant `SYNC.md` procedure. `backup` stops
+before committing or pushing. `restore` backs up replaced live files and asks
+for approval before writing outside the repository.
 
 Sign in to Codex and GitHub separately after restore. Never store credentials in
 this repository.
