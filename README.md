@@ -1,47 +1,39 @@
 # Codex dots
 
-This repository backs up durable user-level Codex configuration for one macOS
-machine. It is safe to keep public because authentication, sessions, logs,
-caches, and other machine state are excluded.
+This repository is the source of truth for Xin and Ziki's durable user-level
+Codex configuration. It is safe to keep public because authentication,
+sessions, logs, caches, and other machine state are excluded.
 
-## Layout
+## Select a profile
 
-| Repo path | Installed path | Purpose |
-| --- | --- | --- |
-| `dotagents/AGENTS.md` | `~/.agents/AGENTS.md` | Personal coding and communication rules |
-| `dotagents/skills/` | `~/.agents/skills/` | Reusable Codex workflows |
-| `dotcodex/config.toml` | `~/.codex/config.toml` | Durable Codex and desktop preferences |
-| `dotcodex/model-instructions.md` | `~/.codex/model-instructions.md` | Codex-specific operating instructions |
+Each machine selects its profile once:
 
-Codex reads `~/.codex/AGENTS.md`, which should be a relative symlink to the
-canonical shared instructions:
-
-```text
-~/.codex/AGENTS.md -> ../.agents/AGENTS.md
+```bash
+./dots profile xin
+# or
+./dots profile ziki
 ```
 
-## Defaults
+The selection is stored in the ignored `.dots-profile` file. Check it with:
 
-- Use GPT-5.6 Sol at medium reasoning effort.
-- Allow edits and commands inside the active workspace.
-- Allow network access for package installation, GitHub, and CI.
-- Require approval before writing outside the workspace.
-- Keep memories and multi-agent tools disabled.
-- Open files in VS Code.
-- Use `codex/` branches and squash merges.
-- Confirm a pull request's reason before opening it.
-- Never merge a pull request without an explicit request.
+```bash
+./dots profile
+```
 
-## Skills
+Both profiles use GPT-5.6 Sol at medium reasoning effort.
 
-The selected skills cover TypeScript and React code quality, frontend design,
-web animation, codebase improvement, documentation, durable prose, and shipping
-a change through a green GitHub pull request.
+Xin and Ziki share the same configuration and skills except for pull request
+delivery. Xin has both workflows:
 
-## Sync policy
+- `ship-it` verifies work, creates a commit and pull request, then drives CI to
+  green.
+- `yolo` verifies work, commits it, and pushes directly to the remote default
+  branch.
 
-[SYNC.md](SYNC.md) is the source of truth for backup and restore. The routine is
-agent-driven so it can curate `config.toml` and review every diff.
+Ziki has `yolo` only. Her profile does not use branches, worktrees, pull
+requests, or PR-specific desktop preferences.
+
+## Sync configuration
 
 Run the launcher from this checkout:
 
@@ -51,12 +43,31 @@ Run the launcher from this checkout:
 ./dots restore
 ```
 
-Each command opens Codex with the relevant `SYNC.md` procedure. `backup` stops
-before committing or pushing. `restore` backs up replaced live files and asks
-for approval before writing outside the repository.
+Each command opens Codex with the relevant [SYNC.md](SYNC.md) procedure for the
+selected profile. `backup` stops before committing or pushing. `restore` backs
+up replaced live files and asks for approval before writing outside the
+repository.
 
 Sign in to Codex and GitHub separately after restore. Never store credentials in
 this repository.
+
+## Stored configuration
+
+Each directory under `profiles/` contains one user's allowlisted configuration:
+
+| Profile path | Installed path | Purpose |
+| --- | --- | --- |
+| `dotagents/AGENTS.md` | `~/.agents/AGENTS.md` | Coding and communication rules |
+| `dotagents/skills/` | `~/.agents/skills/` | Reusable Codex workflows |
+| `dotcodex/config.toml` | `~/.codex/config.toml` | Durable Codex preferences |
+| `dotcodex/model-instructions.md` | `~/.codex/model-instructions.md` | Codex operating instructions |
+
+Codex reads `~/.codex/AGENTS.md`, which restore creates as a relative link to
+the canonical shared instructions:
+
+```text
+~/.codex/AGENTS.md -> ../.agents/AGENTS.md
+```
 
 ## Origin
 

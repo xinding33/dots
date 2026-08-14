@@ -1,0 +1,37 @@
+model = "gpt-5.6-sol"
+model_instructions_file = "model-instructions.md"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+background_terminal_max_timeout = 1200000
+approvals_reviewer = "user"
+service_tier = "default"
+file_opener = "vscode"
+
+[sandbox_workspace_write]
+network_access = true
+
+[features]
+memories = false
+
+[agents]
+enabled = false
+
+[memories]
+generate_memories = false
+use_memories = false
+
+[desktop]
+preventSleepWhileRunning = true
+git-commit-instructions = """
+Focus on documenting what changed for humans reviewing the list of commits. Be detailed and include the reasoning for changes made.
+
+When Codex materially authors, rewrites, debugs, or verifies the change, append this exact Git trailer after a blank line:
+
+Co-authored-by: Codex <noreply@openai.com>
+
+Do not add that trailer for commits where Codex only inspected state, answered questions, or performed a purely mechanical user-specified command without contributing authorship. Do not add a human co-author trailer unless the user explicitly asks for one.
+"""
+followUpQueueMode = "steer"
+show-context-window-usage = true
+reviewDelivery = "detached"

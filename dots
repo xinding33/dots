@@ -3,31 +3,90 @@
 set -eu
 
 usage() {
-  printf 'Usage: %s {backup|restore|status}\n' "$0" >&2
+  printf 'Usage: %s profile [xin|ziki]\n' "$0" >&2
+  printf '       %s {backup|restore|status}\n' "$0" >&2
   exit 2
 }
 
-[ "$#" -eq 1 ] || usage
+repo_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+profile_file="$repo_dir/.dots-profile"
+
+case "${1-}" in
+  profile)
+    if [ "$#" -eq 1 ]; then
+      if [ -f "$profile_file" ]; then
+        IFS= read -r profile < "$profile_file"
+        case "$profile" in
+          xin|ziki)
+            printf '%s\n' "$profile"
+            exit 0
+            ;;
+          *)
+            printf 'Invalid profile in %s. Select xin or ziki again.\n' "$profile_file" >&2
+            exit 1
+            ;;
+        esac
+      fi
+
+      printf 'No profile selected. Run %s profile xin or %s profile ziki.\n' "$0" "$0" >&2
+      exit 1
+    fi
+
+    [ "$#" -eq 2 ] || usage
+    case "$2" in
+      xin|ziki)
+        printf '%s\n' "$2" > "$profile_file"
+        printf 'Selected profile: %s\n' "$2"
+        exit 0
+        ;;
+      *)
+        usage
+        ;;
+    esac
+    ;;
+  backup|restore|status)
+    [ "$#" -eq 1 ] || usage
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+if [ ! -f "$profile_file" ]; then
+  printf 'No profile selected. Run %s profile xin or %s profile ziki.\n' "$0" "$0" >&2
+  exit 1
+fi
+
+IFS= read -r profile < "$profile_file"
+case "$profile" in
+  xin|ziki)
+    ;;
+  *)
+    printf 'Invalid profile in %s. Select xin or ziki again.\n' "$profile_file" >&2
+    exit 1
+    ;;
+esac
+
+profile_dir="$repo_dir/profiles/$profile"
+if [ ! -d "$profile_dir/dotagents" ] || [ ! -d "$profile_dir/dotcodex" ]; then
+  printf 'Profile %s is incomplete in %s.\n' "$profile" "$profile_dir" >&2
+  exit 1
+fi
 
 if ! command -v codex >/dev/null 2>&1; then
   printf 'Error: codex is not available on PATH.\n' >&2
   exit 127
 fi
 
-repo_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-
 case "$1" in
   backup)
-    prompt='Read SYNC.md completely, then perform its Backup procedure from the live home configuration into this repository. This request authorizes writes only inside this repository. Preserve unrelated worktree changes. Enforce the allowlist and config.toml curation rules. Do not copy authentication or machine state. Validate the result, show the exact Git diff, and stop without committing or pushing.'
+    prompt="Read SYNC.md completely, then perform its Backup procedure for the selected '$profile' profile at profiles/$profile. This request authorizes writes only inside this repository. Preserve unrelated worktree changes. Enforce the allowlist and config.toml curation rules. Do not copy authentication or machine state. Validate the result, show the exact Git diff, and stop without committing or pushing."
     ;;
   restore)
-    prompt='Read SYNC.md completely, then perform its Restore procedure from this repository into the live home configuration. Before overwriting a live file or skill, create a recoverable backup under ~/.codex/backups/. This request authorizes writes only to the allowlisted ~/.agents and ~/.codex configuration paths. Preserve authentication, sessions, app-managed system skills, and machine state. Request approval when the sandbox requires it. Validate the restored files and report the backup location. Do not commit or push.'
+    prompt="Read SYNC.md completely, then perform its Restore procedure for the selected '$profile' profile at profiles/$profile. Before overwriting a live file or skill, create a recoverable backup under ~/.codex/backups/. This request authorizes writes only to the allowlisted ~/.agents and ~/.codex configuration paths. Preserve authentication, sessions, app-managed system skills, and machine state. Request approval when the sandbox requires it. Validate the restored files and report the backup location. Do not commit or push."
     ;;
   status)
-    prompt='Read SYNC.md completely. Compare the allowlisted live home configuration with this repository. Report drift, sanitization differences, and whether backup or restore is the appropriate next action. Do not edit files, configuration, Git state, or authentication.'
-    ;;
-  *)
-    usage
+    prompt="Read SYNC.md completely. Compare the selected '$profile' profile at profiles/$profile with the allowlisted live home configuration. Report drift, sanitization differences, and whether backup or restore is the appropriate next action. Do not edit files, configuration, Git state, or authentication."
     ;;
 esac
 
