@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yolo"
+  short_description: "Verify, commit, and push directly to main"
+  default_prompt: "Use $yolo to verify this work, commit it, and push it directly to the remote default branch."
